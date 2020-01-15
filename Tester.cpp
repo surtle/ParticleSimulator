@@ -69,7 +69,7 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 
 	// Initialize SKELETON 
 	skeleton = new Skeleton();
-	skeleton->load("wasp.skel");
+	skeleton->load("giraffe.skel");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
