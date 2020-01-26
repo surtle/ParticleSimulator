@@ -1,6 +1,8 @@
 #include "Joint.h"
 #include <iostream>
 
+std::vector<Joint*> Joint::joints;
+
 Joint::Joint()
 {
 	localMat = glm::mat4(1);
@@ -12,6 +14,8 @@ Joint::Joint()
 	pose = glm::vec3(0);
 
 	jointModel = new Model();
+
+	Joint::joints.push_back(this);
 }
 
 Joint::~Joint()
@@ -147,7 +151,7 @@ void Joint::update(glm::mat4 parent)
 
 	// calculate local and world matrices 
 	localMat = glm::translate(offset) * rotMat; 
-	worldMat = parent * localMat;
+	worldMat = parent * localMat; 
 
 	jointModel->MakeBox(boxmin, boxmax);
 
@@ -174,4 +178,14 @@ void Joint::addChild(Joint* child)
 glm::mat4 Joint::getLocalMat()
 {
 	return glm::mat4(1);
+}
+
+glm::mat4 Joint::getWorldMat()
+{
+	return worldMat;
+}
+
+std::vector<Joint*> Joint::getJoints()
+{
+	return joints;
 }

@@ -17,8 +17,13 @@ public:
 	void addChild(Joint* child);			// add child to children 
 
 	glm::mat4 getLocalMat(); 
+	glm::mat4 getWorldMat(); 
+
+	static std::vector<Joint*> getJoints();
 
 private:
+	static std::vector<Joint*> joints;
+
 	glm::mat4 localMat;
 	glm::mat4 worldMat;
 

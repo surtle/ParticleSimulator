@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "SpinningCube.h"
 #include "Skeleton.h"
+#include "Skin.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +47,7 @@ private:
 	SpinningCube *Cube;
 	Camera *Cam;
 	Skeleton* skeleton;
+	Skin* skin;
 	Tokenizer* t; 
 };
 

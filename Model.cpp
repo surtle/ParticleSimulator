@@ -127,4 +127,20 @@ void Model::SetBuffers(const std::vector<ModelVertex> &vtx,const std::vector<uin
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }
 
+void Model::SetBuffers(std::vector<vec3> vertices, std::vector<int> indices)
+{
+	Count = (int)indices.size();
+
+	// store vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(ModelVertex), &vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Store index buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
 ////////////////////////////////////////////////////////////////////////////////

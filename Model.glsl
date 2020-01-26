@@ -36,9 +36,13 @@ in vec3 fragPosition;
 in vec3 fragNormal;
 
 uniform vec3 AmbientColor=vec3(0.2);
-uniform vec3 LightDirection=normalize(vec3(1,5,2));
-uniform vec3 LightColor=vec3(1);
-uniform vec3 DiffuseColor=vec3(0.5);
+uniform vec3 LightDirection=normalize(vec3(1,0,2));
+uniform vec3 LightColor=vec3(0, 0, 1);
+uniform vec3 DiffuseColor=vec3(0, 0, 0.5);
+
+uniform vec3 LightDirection2=normalize(vec3(-1, 2, 1));
+uniform vec3 LightColor2 = vec3(1, 0, 0);
+uniform vec3 DiffuseColor2 = vec3(0.5, 0, 0);
 
 out vec3 finalColor;
 
@@ -46,15 +50,34 @@ out vec3 finalColor;
 // Fragment shader
 ////////////////////////////////////////
 
+vec3 calcDirLight(vec3 lightDirection, vec3 normal, vec3 amb, vec3 dif, vec3 color) {
+	vec3 lightDir = normalize(lightDirection); 
+
+	float diff = max(dot(normal, lightDir), 0.0); 
+
+	vec3 ambient = amb;
+	vec3 diffuse = dif * diff * color;
+
+	return (ambient + diffuse);
+}
+
 void main() {
 	// Compute irradiance (sum of ambient & direct lighting)
 	vec3 irradiance=AmbientColor + LightColor * max(0,dot(LightDirection,fragNormal));
 
+	vec3 irradiance2=AmbientColor + LightColor2 * max(0,dot(LightDirection2, fragNormal));
+
 	// Diffuse reflectance
 	vec3 reflectance=irradiance * DiffuseColor;
 
+	vec3 reflectance2=irradiance * DiffuseColor2; 
+
+	vec3 sums = calcDirLight(LightDirection, fragNormal, AmbientColor, DiffuseColor, LightColor) + calcDirLight(LightDirection2, fragNormal, AmbientColor, DiffuseColor2, LightColor2);
+
+	gl_FragColor = vec4(sums, 1);
+
 	// Gamma correction
-	gl_FragColor=vec4(sqrt(reflectance),1);
+	//gl_FragColor=vec4(sqrt(reflectance),1);
 }
 
 #endif

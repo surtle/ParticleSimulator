@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Vertex.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +25,7 @@ public:
 
 	void MakeBox(const glm::vec3 &boxMin,const glm::vec3 &boxMax);
 	void SetBuffers(const std::vector<ModelVertex> &vtx,const std::vector<uint> &idx);
+	void SetBuffers(std::vector<vec3> vertices, std::vector<int> indices);
 
 	// Access functions
 

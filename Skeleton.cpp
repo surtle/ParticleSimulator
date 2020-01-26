@@ -15,11 +15,11 @@ void Skeleton::init()
 
 bool Skeleton::load(const char* file)
 {
-	Tokenizer token;
+	Tokenizer token; 
 	token.Open(file); 
-	token.FindToken("balljoint");
+	token.FindToken("balljoint"); 
 
-	root = new Joint();
+	root = new Joint(); 
 	root->load(token); 
 
 	token.Close();
@@ -34,6 +34,11 @@ void Skeleton::update(glm::mat4 transform)
 void Skeleton::draw(const glm::mat4& viewProjMtx, uint shader)
 {
 	root->draw(viewProjMtx, shader);
+}
+
+Joint* Skeleton::getRoot()
+{
+	return root;
 }
 
 void Skeleton::reset()

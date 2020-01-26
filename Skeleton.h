@@ -14,6 +14,8 @@ public:
 	void update(glm::mat4 transform);
 	void draw(const glm::mat4& viewProjMtx, uint shader);
 
+	Joint* getRoot();
+
 	void reset(); 
 
 private:

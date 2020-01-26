@@ -59,7 +59,7 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	// Initialize GLEW
 	glewInit();
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	// Initialize components
 	Program=new ShaderProgram("Model.glsl",ShaderProgram::eRender);
@@ -69,7 +69,12 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 
 	// Initialize SKELETON 
 	skeleton = new Skeleton();
-	skeleton->load("giraffe.skel");
+	skeleton->load("wasp.skel");
+	skeleton->update(glm::mat4(1));
+
+	skin = new Skin(skeleton);
+	skin->load("wasp.skin");
+	skin->init();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +84,7 @@ Tester::~Tester() {
 	delete Cube;
 	delete Cam;
 	delete skeleton;
+	delete skin;
 
 	glFinish();
 	glutDestroyWindow(WindowHandle);
@@ -115,7 +121,8 @@ void Tester::Draw() {
 
 	// Draw components
 	//Cube->Draw(Cam->GetViewProjectMtx(),Program->GetProgramID());
-	skeleton->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	//skeleton->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	skin->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
 
 	// Finish drawing scene
 	glFinish();
