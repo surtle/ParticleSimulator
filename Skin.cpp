@@ -22,47 +22,6 @@ Skin::~Skin()
 	}
 }
 
-void Skin::init()
-{
-	glm::mat4 m;
-	std::vector<glm::mat4> ms;
-
-	std::vector<Joint*> joints = skeleton->getRoot()->getJoints();
-	for (uint i = 0; i < joints.size(); i++) {
-		// PRECALCULATE M
-		m = joints[i]->getWorldMat() * bindings[i];
-		ms.push_back(m);
-	}
-
-	for (Vertex* v : vertices) {
-		vec4 oldPos = vec4(v->getPosition(), 1);
-		vec3 newPos = glm::vec3(0);
-
-		vec4 oldNorm = vec4(v->getNormal(), 1);
-		vec3 newNorm = glm::vec3(0);
-
-		for (int j : v->getJoints()) {
-			vec4 newP = v->getWeights()[j] * ms[j] * oldPos;
-			vec4 newN = v->getWeights()[j] * ms[j] * oldNorm;
-
-			newPos += vec3(newP.x, newP.y, newP.z);
-			newNorm += vec3(newN.x, newN.y, newN.z);
-		}
-
-		newNorm = normalize(newNorm);
-
-		v->setPosition(newPos);
-		v->setNormal(newNorm);
-	}
-
-	std::vector<ModelVertex> new_vertices;
-	for (Vertex* v : vertices) {
-		new_vertices.push_back({ v->getPosition(), v->getNormal() });
-	}
-
-	skinModel->SetBuffers(new_vertices, indices);
-}
-
 bool Skin::load(const char* file)
 {
 	Tokenizer token;
@@ -164,26 +123,28 @@ void Skin::update(glm::mat4 parent)
 {
 	glm::mat4 m;
 	std::vector<glm::mat4> ms;
+	std::vector<Vertex*> newVertices;
 
 	std::vector<Joint*> joints = skeleton->getRoot()->getJoints();
 	for (uint i = 0; i < joints.size(); i++) {
 		// PRECALCULATE M
-		m = joints[i]->getLocalMat() * bindings[i];
-		//m = bindings[i] * joints[i]->getWorldMat();
+		m = joints[i]->getWorldMat() * bindings[i];
 		ms.push_back(m);
 	}
 
 	for (Vertex* v : vertices) {
-		
 		vec4 oldPos = vec4(v->getPosition(), 1);
 		vec3 newPos = glm::vec3(0);
 
-		vec4 oldNorm = vec4(v->getNormal(), 1);
+		vec3 oldNorm = v->getNormal();
 		vec3 newNorm = glm::vec3(0);
 
 		for (int j : v->getJoints()) {
+
+			mat3 m_mat3 = mat3(vec3(ms[j][0]), vec3(ms[j][1]), vec3(ms[j][2]));
+
 			vec4 newP = v->getWeights()[j] * ms[j] * oldPos;
-			vec4 newN = v->getWeights()[j] * ms[j] * oldNorm;
+			vec3 newN = v->getWeights()[j] * m_mat3 * oldNorm;
 
 			newPos += vec3(newP.x, newP.y, newP.z);
 			newNorm += vec3(newN.x, newN.y, newN.z);
@@ -191,12 +152,19 @@ void Skin::update(glm::mat4 parent)
 
 		newNorm = normalize(newNorm);
 
-		v->setPosition(newPos);
-		v->setNormal(newNorm);
+		Vertex* newVert = new Vertex();
+
+		newVert->setPosition(newPos);
+		newVert->setNormal(newNorm);
+
+		newVertices.push_back(newVert);
+
+		//v->setPosition(newPos);
+		//v->setNormal(newNorm);
 	}
 
 	std::vector<ModelVertex> new_vertices;
-	for (Vertex* v : vertices) {
+	for (Vertex* v : newVertices) {
 		new_vertices.push_back({ v->getPosition(), v->getNormal() });
 	}
 

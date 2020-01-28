@@ -28,3 +28,7 @@ typedef unsigned int uint;
 // STD library
 #include <vector>
 #include <ctype.h>
+
+#define ROTX 30
+#define ROTY 31
+#define ROTZ 32

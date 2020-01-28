@@ -35,7 +35,7 @@ void main() {
 in vec3 fragPosition;
 in vec3 fragNormal;
 
-uniform vec3 AmbientColor=vec3(0.2);
+uniform vec3 AmbientColor=vec3(0.15, 0.2, 0.6);
 uniform vec3 LightDirection=normalize(vec3(1,0,2));
 uniform vec3 LightColor=vec3(0, 0, 1);
 uniform vec3 DiffuseColor=vec3(0, 0, 0.5);
@@ -43,6 +43,8 @@ uniform vec3 DiffuseColor=vec3(0, 0, 0.5);
 uniform vec3 LightDirection2=normalize(vec3(-1, 2, 1));
 uniform vec3 LightColor2 = vec3(1, 0, 0);
 uniform vec3 DiffuseColor2 = vec3(0.5, 0, 0);
+
+uniform vec3 eye = vec3(0, 3, -5);
 
 out vec3 finalColor;
 
@@ -52,13 +54,20 @@ out vec3 finalColor;
 
 vec3 calcDirLight(vec3 lightDirection, vec3 normal, vec3 amb, vec3 dif, vec3 color) {
 	vec3 lightDir = normalize(lightDirection); 
+	vec3 specLight = vec3(1);
 
 	float diff = max(dot(normal, lightDir), 0.0); 
+	
+	float specularStrength = 0.5;
+	vec3 viewDir = normalize(eye - fragPosition);
+	vec3 reflectDir = reflect(-lightDir, normal);
 
 	vec3 ambient = amb;
 	vec3 diffuse = dif * diff * color;
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+	vec3 specular = specularStrength * spec * specLight;
 
-	return (ambient + diffuse);
+	return (ambient + diffuse + specular);
 }
 
 void main() {

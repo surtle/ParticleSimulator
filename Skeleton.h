@@ -15,10 +15,18 @@ public:
 	void draw(const glm::mat4& viewProjMtx, uint shader);
 
 	Joint* getRoot();
+	void changeJoint();
+	void changeDOF();
+	void changeJointDOF(int flag);
+
+	void changeRot(int rotDOF, int flag);
 
 	void reset(); 
 
 private:
 	Joint* root;
+	
+	int activeJoint;
+	std::vector<Joint*> joints;
 };
 

@@ -14,7 +14,6 @@ public:
 	Skin(Skeleton* s);
 	~Skin();
 
-	void init();
 	bool load(const char* file);
 	void update(glm::mat4 parent);
 	void draw(const glm::mat4& viewMatr, uint shader);

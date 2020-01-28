@@ -3,6 +3,8 @@
 ////////////////////////////////////////
 
 #include "Tester.h"
+#include <iostream>
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +76,17 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 
 	skin = new Skin(skeleton);
 	skin->load("wasp.skin");
-	skin->init();
+	//skin->init();
+
+	// print instructions 
+	cout << "CONTROLS: " << endl;
+	cout << "CHANGE JOINT: A" << endl;
+	cout << "CHANGE DOF: S" << endl;
+	cout << "INCREASE DOF: J" << endl;
+	cout << "DECREASE DOF: K" << endl;
+	cout << "INCREASE/DECREASE ROTX: 8/I" << endl;
+	cout << "INCREASE/DECREASE ROTY: 9/O" << endl;
+	cout << "INCREASE/DECREASE ROTZ: 0/P" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +109,7 @@ void Tester::Update() {
 	Cube->Update();
 	Cam->Update();
 	skeleton->update(glm::mat4(1));
+	skin->update(glm::mat4(1));
 
 	// Tell glut to re-display the scene
 	glutSetWindow(WindowHandle);
@@ -155,6 +168,42 @@ void Tester::Keyboard(int key,int x,int y) {
 		case 'r':
 			Reset();
 			break;
+		case 'a':
+			skeleton->changeJoint();
+			break;
+		case 's':
+			skeleton->changeDOF();
+			break; 
+		case 'j':
+			skeleton->changeJointDOF(1);
+			break;
+		case 'k':
+			skeleton->changeJointDOF(-1);
+			break;
+		case '8':
+			// increase rotx
+			skeleton->changeRot(ROTX, 1);
+			break;
+		case 'i':
+			// decrease rotx
+			skeleton->changeRot(ROTX, -1);
+			break;
+		case '9':
+			// increase roty
+			skeleton->changeRot(ROTY, 1);
+			break;
+		case 'o':
+			// decrease roty
+			skeleton->changeRot(ROTY, -1);
+			break;
+		case '0':
+			// increase rotz
+			skeleton->changeRot(ROTZ, 1);
+			break;
+		case 'p':
+			// decrease rotz
+			skeleton->changeRot(ROTZ, -1);
+			break; 
 	}
 }
 
