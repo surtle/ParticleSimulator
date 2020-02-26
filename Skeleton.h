@@ -19,6 +19,8 @@ public:
 	void changeDOF();
 	void changeJointDOF(int flag);
 
+	void setRot(int rotDOF, float val);
+
 	void changeRot(int rotDOF, int flag);
 
 	void reset(); 

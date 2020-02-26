@@ -107,8 +107,8 @@ bool Skin::load(const char* file)
 			binding[j][2] = token.GetFloat();
 		}
 
+		// calculate inverse of binding matrix
 		binding = inverse(binding);
-
 		binding[3][3] = 1;
 
 		bindings.push_back(binding);
@@ -132,6 +132,7 @@ void Skin::update(glm::mat4 parent)
 		ms.push_back(m);
 	}
 
+	// calculate blended vertices 
 	for (Vertex* v : vertices) {
 		vec4 oldPos = vec4(v->getPosition(), 1);
 		vec3 newPos = glm::vec3(0);
@@ -159,8 +160,6 @@ void Skin::update(glm::mat4 parent)
 
 		newVertices.push_back(newVert);
 
-		//v->setPosition(newPos);
-		//v->setNormal(newNorm);
 	}
 
 	std::vector<ModelVertex> new_vertices;
@@ -168,7 +167,13 @@ void Skin::update(glm::mat4 parent)
 		new_vertices.push_back({ v->getPosition(), v->getNormal() });
 	}
 
+	// set buffers 
 	skinModel->SetBuffers(new_vertices, indices);
+
+	// delete the previously calculated blended vertices 
+	for (Vertex* v : newVertices) {
+		delete v;
+	}
 }
 
 void Skin::draw(const glm::mat4& viewMatr, uint shader)

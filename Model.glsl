@@ -35,14 +35,14 @@ void main() {
 in vec3 fragPosition;
 in vec3 fragNormal;
 
-uniform vec3 AmbientColor=vec3(0.15, 0.2, 0.6);
-uniform vec3 LightDirection=normalize(vec3(1,0,2));
-uniform vec3 LightColor=vec3(0, 0, 1);
-uniform vec3 DiffuseColor=vec3(0, 0, 0.5);
+uniform vec3 AmbientColor=vec3(0.4, 0.1, 0.4);
+uniform vec3 LightDirection=normalize(vec3(0,-1,-4));
+uniform vec3 LightColor=vec3(1, 0, 1);
+uniform vec3 DiffuseColor=vec3(0, 0, 0.7);
 
-uniform vec3 LightDirection2=normalize(vec3(-1, 2, 1));
+uniform vec3 LightDirection2=normalize(vec3(-1, 3, 1));
 uniform vec3 LightColor2 = vec3(1, 0, 0);
-uniform vec3 DiffuseColor2 = vec3(0.5, 0, 0);
+uniform vec3 DiffuseColor2 = vec3(0.2, 0, 0);
 
 uniform vec3 eye = vec3(0, 3, -5);
 
@@ -58,7 +58,7 @@ vec3 calcDirLight(vec3 lightDirection, vec3 normal, vec3 amb, vec3 dif, vec3 col
 
 	float diff = max(dot(normal, lightDir), 0.0); 
 	
-	float specularStrength = 0.5;
+	float specularStrength = 0.7;
 	vec3 viewDir = normalize(eye - fragPosition);
 	vec3 reflectDir = reflect(-lightDir, normal);
 
@@ -81,7 +81,7 @@ void main() {
 
 	vec3 reflectance2=irradiance * DiffuseColor2; 
 
-	vec3 sums = calcDirLight(LightDirection, fragNormal, AmbientColor, DiffuseColor, LightColor) + calcDirLight(LightDirection2, fragNormal, AmbientColor, DiffuseColor2, LightColor2);
+	vec3 sums = calcDirLight(LightDirection, fragNormal, AmbientColor, DiffuseColor, LightColor) + calcDirLight(LightDirection2, fragNormal, AmbientColor, DiffuseColor, LightColor);
 
 	gl_FragColor = vec4(sums, 1);
 

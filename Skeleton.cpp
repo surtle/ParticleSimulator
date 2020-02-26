@@ -29,6 +29,7 @@ bool Skeleton::load(const char* file)
 	root->load(token); 
 
 	joints = root->getJoints();
+	cout << "num joints: " << joints.size() << endl;
 
 	token.Close();
 	return true;
@@ -58,7 +59,7 @@ void Skeleton::changeJoint()
 		activeJoint++;
 	}
 
-	cout << "Selected Joint #" << activeJoint << endl;
+	//cout << "Selected Joint #" << activeJoint << endl;
 }
 
 void Skeleton::changeDOF()
@@ -76,6 +77,11 @@ void Skeleton::changeJointDOF(int flag)
 		// increase DOF
 		joints[activeJoint]->changeDOFVal(1);
 	}
+}
+
+void Skeleton::setRot(int rotDOF, float val) 
+{
+	joints[activeJoint]->setRot(rotDOF, val);
 }
 
 void Skeleton::changeRot(int rotDOF, int flag)

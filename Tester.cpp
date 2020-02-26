@@ -13,7 +13,7 @@ static Tester *TESTER=0;
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 
-	TESTER=new Tester("CSE 169 Project 1",argc,argv);
+	TESTER=new Tester("CSE 169 Project 4",argc,argv);
 	glutMainLoop();
 	delete TESTER;
 
@@ -69,24 +69,25 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	Cam=new Camera;
 	Cam->SetAspect(float(WinX)/float(WinY));
 
-	// Initialize SKELETON 
-	skeleton = new Skeleton();
-	skeleton->load("wasp.skel");
-	skeleton->update(glm::mat4(1));
-
-	skin = new Skin(skeleton);
-	skin->load("wasp.skin");
-	//skin->init();
+	// initialize cloth
+	cloth = new Cloth();
+	cloth->init();
 
 	// print instructions 
-	cout << "CONTROLS: " << endl;
-	cout << "CHANGE JOINT: A" << endl;
-	cout << "CHANGE DOF: S" << endl;
-	cout << "INCREASE DOF: J" << endl;
-	cout << "DECREASE DOF: K" << endl;
-	cout << "INCREASE/DECREASE ROTX: 8/I" << endl;
-	cout << "INCREASE/DECREASE ROTY: 9/O" << endl;
-	cout << "INCREASE/DECREASE ROTZ: 0/P" << endl;
+	cout << "TOP RIGHT CONTROLS: " << endl;
+	cout << "  +X POSITION - 1" << endl;
+	cout << "  +Y POSITION - 2" << endl;
+	cout << "  +Z POSITION - 3" << endl;
+	cout << "  -X POSITION - Q" << endl;
+	cout << "  -Y POSITION - W" << endl;
+	cout << "  -Z POSITION - E" << endl;
+	cout << "TOP LEFT CONTROLS: " << endl;
+	cout << "  +X POSITION - 8" << endl;
+	cout << "  +Y POSITION - 9" << endl;
+	cout << "  +Z POSITION - 0" << endl;
+	cout << "  -X POSITION - I" << endl;
+	cout << "  -Y POSITION - O" << endl;
+	cout << "  -Z POSITION - P" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +98,8 @@ Tester::~Tester() {
 	delete Cam;
 	delete skeleton;
 	delete skin;
+	delete anim;
+	delete player;
 
 	glFinish();
 	glutDestroyWindow(WindowHandle);
@@ -108,8 +111,9 @@ void Tester::Update() {
 	// Update the components in the world
 	Cube->Update();
 	Cam->Update();
-	skeleton->update(glm::mat4(1));
-	skin->update(glm::mat4(1));
+
+	cloth->update();
+	cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
 
 	// Tell glut to re-display the scene
 	glutSetWindow(WindowHandle);
@@ -133,9 +137,7 @@ void Tester::Draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
-	//Cube->Draw(Cam->GetViewProjectMtx(),Program->GetProgramID());
-	//skeleton->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
-	skin->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
 
 	// Finish drawing scene
 	glFinish();
@@ -168,42 +170,42 @@ void Tester::Keyboard(int key,int x,int y) {
 		case 'r':
 			Reset();
 			break;
-		case 'a':
-			skeleton->changeJoint();
+		case '1':
+			cloth->updateTopLeft(0, 0.2);
 			break;
-		case 's':
-			skeleton->changeDOF();
-			break; 
-		case 'j':
-			skeleton->changeJointDOF(1);
+		case '2':
+			cloth->updateTopLeft(1, 0.2);
 			break;
-		case 'k':
-			skeleton->changeJointDOF(-1);
+		case '3':
+			cloth->updateTopLeft(2, 0.2);
+			break;
+		case 'q':
+			cloth->updateTopLeft(0, -0.2);
+			break;
+		case 'w':
+			cloth->updateTopLeft(1, -0.2);
+			break;
+		case 'e':
+			cloth->updateTopLeft(2, -0.2);
 			break;
 		case '8':
-			// increase rotx
-			skeleton->changeRot(ROTX, 1);
-			break;
-		case 'i':
-			// decrease rotx
-			skeleton->changeRot(ROTX, -1);
+			cloth->updateTopRight(0, 0.2);
 			break;
 		case '9':
-			// increase roty
-			skeleton->changeRot(ROTY, 1);
-			break;
-		case 'o':
-			// decrease roty
-			skeleton->changeRot(ROTY, -1);
+			cloth->updateTopRight(1, 0.2);
 			break;
 		case '0':
-			// increase rotz
-			skeleton->changeRot(ROTZ, 1);
+			cloth->updateTopRight(2, 0.2);
+			break;
+		case 'i':
+			cloth->updateTopRight(0, -0.2);
+			break;
+		case 'o':
+			cloth->updateTopRight(1, -0.2);
 			break;
 		case 'p':
-			// decrease rotz
-			skeleton->changeRot(ROTZ, -1);
-			break; 
+			cloth->updateTopRight(2, -0.2);
+			break;
 	}
 }
 

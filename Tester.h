@@ -9,6 +9,9 @@
 #include "SpinningCube.h"
 #include "Skeleton.h"
 #include "Skin.h"
+#include "Animation.h"
+#include "Player.h"
+#include "Cloth.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +51,9 @@ private:
 	Camera *Cam;
 	Skeleton* skeleton;
 	Skin* skin;
+	Animation* anim;
+	Player* player;
+	Cloth* cloth;
 	Tokenizer* t; 
 };
 

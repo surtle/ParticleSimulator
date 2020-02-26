@@ -23,7 +23,9 @@ public:
 
 	void changeDOF(); 
 	void changeDOFVal(int flag); 
+	void setRot(int rotDOF, float val);
 	void changeRot(int rotDOF, int flag);
+	void setOffset(float x, float y, float z);
 
 	static std::vector<Joint*> getJoints();
 

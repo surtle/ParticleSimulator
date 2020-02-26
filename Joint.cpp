@@ -272,6 +272,22 @@ void Joint::changeDOFVal(int flag)
 	}
 }
 
+void Joint::setRot(int rotDOF, float val) {
+	switch (rotDOF) {
+	case(ROTX):
+		pose.x = val;
+		break;
+	case(ROTY):
+		pose.y = val;
+		break;
+	case(ROTZ):
+		pose.z = val;
+		break;
+	}
+
+	clamp();
+}
+
 void Joint::changeRot(int rotDOF, int flag)
 {
 	switch (rotDOF) {
@@ -302,6 +318,13 @@ void Joint::changeRot(int rotDOF, int flag)
 	}
 
 	clamp();
+}
+
+void Joint::setOffset(float x, float y, float z)
+{
+	offset.x = x;
+	offset.y = y;
+	offset.z = z;
 }
 
 std::vector<Joint*> Joint::getJoints()
