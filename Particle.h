@@ -11,6 +11,8 @@ public:
 	void applyForce(glm::vec3 f);
 	void computeAcceleration();
 	void addNormal(glm::vec3 n);
+	void setPos(glm::vec3 p);
+	void setVelocity(glm::vec3 v);
 	void normalizeNormal();
 	void resetForces();
 	void resetNormal();

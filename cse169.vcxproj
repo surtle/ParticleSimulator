@@ -24,6 +24,7 @@
     <ClCompile Include="Channel.cpp" />
     <ClCompile Include="Cloth.cpp" />
     <ClCompile Include="DOF.cpp" />
+    <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Joint.cpp" />
     <ClCompile Include="Keyframe.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Cloth.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DOF.h" />
+    <ClInclude Include="Floor.h" />
     <ClInclude Include="Joint.h" />
     <ClInclude Include="Keyframe.h" />
     <ClInclude Include="Model.h" />
@@ -63,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Shader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{41B34E76-1F31-4835-8A87-F05EA3E9FA03}</ProjectGuid>

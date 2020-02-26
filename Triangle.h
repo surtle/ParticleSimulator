@@ -10,6 +10,7 @@ public:
 
 	glm::vec3 getNormal();
 	void calculateNormal();
+	void applyAeroForce(glm::vec3 v_air, float p, float c_d);
 
 	Particle* getP(int p);
 private:

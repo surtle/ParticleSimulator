@@ -12,6 +12,7 @@
 #include "Animation.h"
 #include "Player.h"
 #include "Cloth.h"
+#include "Floor.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,7 @@ private:
 
 	// Components
 	ShaderProgram *Program;
+	ShaderProgram* FloorProgram;
 	SpinningCube *Cube;
 	Camera *Cam;
 	Skeleton* skeleton;
@@ -54,6 +56,7 @@ private:
 	Animation* anim;
 	Player* player;
 	Cloth* cloth;
+	Floor* floor;
 	Tokenizer* t; 
 };
 

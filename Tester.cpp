@@ -47,7 +47,7 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	glutSetWindow( WindowHandle );
 
 	// Background color
-	glClearColor( 0., 0., 0., 1. );
+	glClearColor( 0.52, 0.59, 0.61, 1. );
 
 	// Callbacks
 	glutDisplayFunc( display );
@@ -65,6 +65,7 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 
 	// Initialize components
 	Program=new ShaderProgram("Model.glsl",ShaderProgram::eRender);
+	FloorProgram = new ShaderProgram("Shader.glsl", ShaderProgram::eRender);
 	Cube=new SpinningCube;
 	Cam=new Camera;
 	Cam->SetAspect(float(WinX)/float(WinY));
@@ -72,6 +73,9 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	// initialize cloth
 	cloth = new Cloth();
 	cloth->init();
+
+	// initialize floor
+	floor = new Floor();
 
 	// print instructions 
 	cout << "TOP RIGHT CONTROLS: " << endl;
@@ -88,6 +92,9 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	cout << "  -X POSITION - I" << endl;
 	cout << "  -Y POSITION - O" << endl;
 	cout << "  -Z POSITION - P" << endl;
+	cout << "WIND CONTROL: " << endl;
+	cout << "  INCREASE WIND - M" << endl;
+	cout << "  DECREASE WIND - N" << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +145,7 @@ void Tester::Draw() {
 
 	// Draw components
 	cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	floor->draw(Cam->GetViewProjectMtx(), FloorProgram->GetProgramID());
 
 	// Finish drawing scene
 	glFinish();
@@ -205,6 +213,12 @@ void Tester::Keyboard(int key,int x,int y) {
 			break;
 		case 'p':
 			cloth->updateTopRight(2, -0.2);
+			break;
+		case 'n':
+			cloth->modifyWind(-0.5);
+			break;
+		case 'm':
+			cloth->modifyWind(0.5);
 			break;
 	}
 }

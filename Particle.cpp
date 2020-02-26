@@ -54,6 +54,16 @@ void Particle::addNormal(glm::vec3 n)
 	normal += n;
 }
 
+void Particle::setPos(glm::vec3 p)
+{
+	position = p;
+}
+
+void Particle::setVelocity(glm::vec3 v)
+{
+	velocity = v;
+}
+
 void Particle::normalizeNormal()
 {
 	normal = normalize(normal);

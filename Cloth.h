@@ -23,6 +23,8 @@ public:
 
 	void updateTopRight(int coord, float delta);
 	void updateTopLeft(int coord, float delta);
+	void handleCollisions(int y);
+	void modifyWind(float delta);
 
 private:
 	vector<Particle*> particles;
@@ -34,5 +36,6 @@ private:
 	std::vector<uint> indices;
 
 	glm::vec3 gravity = glm::vec3(0, -9.8, 0);
+	glm::vec3 aero_v = glm::vec3(0, 0, 3);
 };
 

@@ -4,8 +4,15 @@
 
 using namespace std;
 
-#define WIDTH 20
-#define HEIGHT 20
+#define START -2
+#define END 2
+#define STEP 0.1
+
+//#define WIDTH 20
+//#define HEIGHT 20
+
+int WIDTH = (END - START) / STEP;
+int HEIGHT = (END - START) / STEP;
 
 Cloth::Cloth()
 {
@@ -21,11 +28,9 @@ void Cloth::init()
 	// p380 p381 p382 p383 ... p399
 
 	// initialize array of particles to be 20x20 particles 
-	for (float r = 1.25; r > -1.25; r -= 0.125) { 
-		for (float c = -1.25; c < 1.25; c += 0.125) { 
+	for (float r = 2; r > -2; r -= STEP) { 
+		for (float c = -2; c < 2; c += STEP) { 
 			Particle* p = new Particle(glm::vec3(c, r, 0), 0.1);
-			//p->applyForce(gravity);
-			//p->computeAcceleration();
 			particles.push_back(p);
 		}
 	}
@@ -51,7 +56,7 @@ void Cloth::init()
 	}
 
 	particles[0]->setStatic(true);
-	particles[19]->setStatic(true);
+	particles[WIDTH - 1]->setStatic(true);
 
 	setVertices();
 	setIndices();
@@ -65,16 +70,21 @@ void Cloth::draw(glm::mat4 viewMatr, uint shader)
 
 void Cloth::update()
 {
-	particles[150]->applyForce(glm::vec3(0, 0, 0.1));
+	particles[WIDTH/2 + HEIGHT/2]->applyForce(glm::vec3(0, 0, 0.01));
 
 	// apply gravity to all particles
 	for (Particle* p : particles) {
-		p->applyForce(glm::vec3(0, -0.01, 0));	// gravity
+		p->applyForce(glm::vec3(0, -0.01, 0));	// GRAVITY ================================
 	}
 
 	// apply spring damper forces to respective particles
 	for (SpringDamper* s : springDampers) {
 		s->computeForce();
+	}
+
+	// apply aerodynamic force
+	for (Triangle* t : triangles) {
+		t->applyAeroForce(aero_v, 0.1, 0.5);
 	}
 
 	// compute acceleration and update particles 
@@ -84,12 +94,12 @@ void Cloth::update()
 			p->update(0.01);
 			p->resetForces();
 		}
-	}
 
-	// zero out all normals
-	for (Particle* p : particles) {
 		p->resetNormal();
 	}
+
+	// handle collision w/ floor & y = -2
+	handleCollisions(-2);
 
 	// loop through all triangles and add triangle normals to the normals of each particle it intersects
 	for (Triangle* t : triangles) {
@@ -124,15 +134,44 @@ void Cloth::updateTopLeft(int coord, float delta)
 {
 	switch (coord) {
 	case 0:
-		particles[19]->moveX(delta);
+		particles[WIDTH - 1]->moveX(delta);
 		break;
 	case 1:
-		particles[19]->moveY(delta);
+		particles[WIDTH - 1]->moveY(delta);
 		break;
 	case 2:
-		particles[19]->moveZ(delta);
+		particles[WIDTH - 1]->moveZ(delta);
 		break;
 	}
+}
+
+void Cloth::handleCollisions(int y)
+{
+	float elasticity = 0.5;
+	float friction = 0.5;
+
+	for (Particle* p : particles) {
+		glm::vec3 pos = p->getPos();
+
+		if (pos.y < y) {
+			float new_y = 2 * y - pos.y;
+			p->setPos(glm::vec3(pos.x, new_y, pos.z));
+
+			float v_x = (1 - friction) * p->getVelocity().x;
+			float v_y = -elasticity * p->getVelocity().y;
+			float v_z = (1 - friction) * p->getVelocity().z;
+
+			p->setVelocity(glm::vec3(v_x, v_y, v_z));
+		}
+	}
+}
+
+void Cloth::modifyWind(float delta)
+{
+	glm::vec3 old_aero = aero_v;
+
+	aero_v = glm::vec3(old_aero.x, old_aero.y, old_aero.z + delta);
+	cout << "Wind strength now " << old_aero.z + delta << endl;
 }
 
 void Cloth::setVertices()
