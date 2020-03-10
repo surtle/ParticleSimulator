@@ -7,6 +7,13 @@ Triangle::Triangle(Particle* part1, Particle* part2, Particle* part3)
 	p3 = part3;
 }
 
+Triangle::~Triangle()
+{
+	delete p1;
+	delete p2;
+	delete p3;
+}
+
 glm::vec3 Triangle::getNormal()
 {
 	return normal;

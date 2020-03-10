@@ -43,7 +43,8 @@ void Model::Draw(const glm::mat4 &modelMtx,const glm::mat4 &viewProjMtx,uint sha
 	glVertexAttribPointer(normLoc,3,GL_FLOAT,GL_FALSE,sizeof(ModelVertex),(void*)12);
 
 	// Draw geometry
-	glDrawElements(GL_TRIANGLES,Count,GL_UNSIGNED_INT,0);
+	//glDrawElements(GL_POINTS,Count,GL_UNSIGNED_INT,0);
+	glDrawArrays(GL_POINTS, 0, Count);
 
 	// Clean up state
 	glDisableVertexAttribArray(normLoc);

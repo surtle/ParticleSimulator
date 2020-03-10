@@ -29,7 +29,7 @@ public:
 
 	// Access functions
 
-private:
+protected:
 	uint VertexBuffer;
 	uint IndexBuffer;
 

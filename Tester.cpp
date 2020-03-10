@@ -47,7 +47,7 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	glutSetWindow( WindowHandle );
 
 	// Background color
-	glClearColor( 0.52, 0.59, 0.61, 1. );
+	glClearColor( 0.78, 0.91, 0.94, 1. );
 
 	// Callbacks
 	glutDisplayFunc( display );
@@ -63,6 +63,9 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 
+	glEnable(GL_POINT_SMOOTH);
+	glPointSize(10.0f);
+
 	// Initialize components
 	Program=new ShaderProgram("Model.glsl",ShaderProgram::eRender);
 	FloorProgram = new ShaderProgram("Shader.glsl", ShaderProgram::eRender);
@@ -71,30 +74,17 @@ Tester::Tester(const char *windowTitle,int argc,char **argv) {
 	Cam->SetAspect(float(WinX)/float(WinY));
 
 	// initialize cloth
-	cloth = new Cloth();
-	cloth->init();
+	//cloth = new Cloth();
+	//cloth->init();
 
 	// initialize floor
 	floor = new Floor();
 
-	// print instructions 
-	cout << "TOP RIGHT CONTROLS: " << endl;
-	cout << "  +X POSITION - 1" << endl;
-	cout << "  +Y POSITION - 2" << endl;
-	cout << "  +Z POSITION - 3" << endl;
-	cout << "  -X POSITION - Q" << endl;
-	cout << "  -Y POSITION - W" << endl;
-	cout << "  -Z POSITION - E" << endl;
-	cout << "TOP LEFT CONTROLS: " << endl;
-	cout << "  +X POSITION - 8" << endl;
-	cout << "  +Y POSITION - 9" << endl;
-	cout << "  +Z POSITION - 0" << endl;
-	cout << "  -X POSITION - I" << endl;
-	cout << "  -Y POSITION - O" << endl;
-	cout << "  -Z POSITION - P" << endl;
-	cout << "WIND CONTROL: " << endl;
-	cout << "  INCREASE WIND - M" << endl;
-	cout << "  DECREASE WIND - N" << endl;
+	// initialize system
+	system = new ParticleSystem();
+
+	// init GUI
+	gui = new GUI(WinX, WinY, system);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +97,9 @@ Tester::~Tester() {
 	delete skin;
 	delete anim;
 	delete player;
+	delete system;
+	delete floor;
+	delete cloth;
 
 	glFinish();
 	glutDestroyWindow(WindowHandle);
@@ -119,8 +112,9 @@ void Tester::Update() {
 	Cube->Update();
 	Cam->Update();
 
-	cloth->update();
-	cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	//cloth->update();
+	//cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	system->update();
 
 	// Tell glut to re-display the scene
 	glutSetWindow(WindowHandle);
@@ -144,8 +138,10 @@ void Tester::Draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw components
-	cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	//cloth->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
 	floor->draw(Cam->GetViewProjectMtx(), FloorProgram->GetProgramID());
+	system->draw(Cam->GetViewProjectMtx(), Program->GetProgramID());
+	gui->draw();
 
 	// Finish drawing scene
 	glFinish();
@@ -155,6 +151,7 @@ void Tester::Draw() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::Quit() {
+	TwTerminate();
 	glFinish();
 	glutDestroyWindow(WindowHandle);
 	exit(0);
@@ -171,7 +168,8 @@ void Tester::Resize(int x,int y) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::Keyboard(int key,int x,int y) {
-	switch(key) {
+	if (!TwEventKeyboardGLUT(key, x, y)) {
+		switch (key) {
 		case 0x1b:		// Escape
 			Quit();
 			break;
@@ -220,44 +218,50 @@ void Tester::Keyboard(int key,int x,int y) {
 		case 'm':
 			cloth->modifyWind(0.5);
 			break;
+		}
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::MouseButton(int btn,int state,int x,int y) {
-	if(btn==GLUT_LEFT_BUTTON) {
-		LeftDown = (state==GLUT_DOWN);
-	}
-	else if(btn==GLUT_MIDDLE_BUTTON) {
-		MiddleDown = (state==GLUT_DOWN);
-	}
-	else if(btn==GLUT_RIGHT_BUTTON) {
-		RightDown = (state==GLUT_DOWN);
+	if (!TwEventMouseButtonGLUT(btn, state, x, y)) {
+		if (btn == GLUT_LEFT_BUTTON) {
+			LeftDown = (state == GLUT_DOWN);
+		}
+		else if (btn == GLUT_MIDDLE_BUTTON) {
+			MiddleDown = (state == GLUT_DOWN);
+		}
+		else if (btn == GLUT_RIGHT_BUTTON) {
+			RightDown = (state == GLUT_DOWN);
+		}
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void Tester::MouseMotion(int nx,int ny) {
-	int maxDelta=100;
-	int dx = glm::clamp(nx - MouseX,-maxDelta,maxDelta);
-	int dy = glm::clamp(-(ny - MouseY),-maxDelta,maxDelta);
 
-	MouseX = nx;
-	MouseY = ny;
+	if (!TwEventMouseMotionGLUT(nx, ny)) {
+		int maxDelta = 100;
+		int dx = glm::clamp(nx - MouseX, -maxDelta, maxDelta);
+		int dy = glm::clamp(-(ny - MouseY), -maxDelta, maxDelta);
 
-	// Move camera
-	// NOTE: this should really be part of Camera::Update()
-	if(LeftDown) {
-		const float rate=1.0f;
-		Cam->SetAzimuth(Cam->GetAzimuth()+dx*rate);
-		Cam->SetIncline(glm::clamp(Cam->GetIncline()-dy*rate,-90.0f,90.0f));
-	}
-	if(RightDown) {
-		const float rate=0.005f;
-		float dist=glm::clamp(Cam->GetDistance()*(1.0f-dx*rate),0.01f,1000.0f);
-		Cam->SetDistance(dist);
+		MouseX = nx;
+		MouseY = ny;
+
+		// Move camera
+		// NOTE: this should really be part of Camera::Update()
+		if (LeftDown) {
+			const float rate = 1.0f;
+			Cam->SetAzimuth(Cam->GetAzimuth() + dx * rate);
+			Cam->SetIncline(glm::clamp(Cam->GetIncline() - dy * rate, -90.0f, 90.0f));
+		}
+		if (RightDown) {
+			const float rate = 0.005f;
+			float dist = glm::clamp(Cam->GetDistance() * (1.0f - dx * rate), 0.01f, 1000.0f);
+			Cam->SetDistance(dist);
+		}
 	}
 }
 

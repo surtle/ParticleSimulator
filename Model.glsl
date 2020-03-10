@@ -76,7 +76,8 @@ void main() {
 
 	vec3 sums = calcDirLight(LightDirection, fragNormal, AmbientColor, DiffuseColor, LightColor);
 
-	gl_FragColor = vec4(sums, 1);
+	//gl_FragColor = vec4(sums, 1);
+	gl_FragColor = vec4(0.83, 0.51, 0.60, 1);
 
 	// Gamma correction
 	//gl_FragColor=vec4(sqrt(reflectance),1);

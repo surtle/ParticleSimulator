@@ -2,7 +2,7 @@
 
 Floor::Floor()
 {
-	floor = new Model();
+	floor = new FloorModel();
 
 	floor->SetBuffers(vertices, indices);
 }

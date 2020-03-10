@@ -10,14 +10,18 @@ Particle::Particle()
 	acceleration = glm::vec3(0);
 
 	mass = 0;
+	life = -1;
+	radius = 0;
 	force = glm::vec3(0);
 	isStatic = false;
 }
 
-Particle::Particle(glm::vec3 pos, float m)
+Particle::Particle(glm::vec3 pos, float m, float r)
 {
 	position = pos;
 	mass = m;
+	radius = r;
+	life = -1;
 
 	isStatic = false;
 	force = glm::vec3(0);
@@ -43,10 +47,34 @@ void Particle::applyForce(glm::vec3 f)
 	force += f;
 }
 
+void Particle::computeAero(glm::vec3 v_air, float p, float c_d)
+{
+	// find relative velocity
+	glm::vec3 v_rel = velocity - v_air;
+	float v_rel_length = length(v_rel);
+
+	// find e, unit vector opposite of velocity
+	glm::vec3 e = -normalize(v_rel);
+
+	// find normal
+	glm::vec3 normal = normalize(velocity);
+
+	// calculate area of particle
+	float a_0 = 3.14 * radius * radius;
+	float a = a_0 * ((dot(v_rel, normal)) / glm::length(v_rel));
+
+	// calculate force
+	glm::vec3 f_aero = (float)0.5 * p * v_rel_length * v_rel_length * c_d * a * e;
+
+	applyForce(f_aero);
+}
+
 void Particle::computeAcceleration()
 {
 	glm::vec3 acc = (float)(1.0 / mass) * force;
+	//cout << "  force: " << force.x << " " << force.y << " " << force.z << endl;
 	acceleration = acc;
+	//cout << "  acceleration: " << acc.x << " " << acc.y << " " << acc.z << endl;
 }
 
 void Particle::addNormal(glm::vec3 n)
@@ -92,6 +120,21 @@ void Particle::moveY(float delta)
 void Particle::moveZ(float delta)
 {
 	position += glm::vec3(0, 0, delta);
+}
+
+void Particle::resetLife(float l)
+{
+	life = l;
+}
+
+float Particle::getLife()
+{
+	return life;
+}
+
+void Particle::subLife(float delta)
+{
+	life -= delta;
 }
 
 glm::vec3 Particle::getPos()

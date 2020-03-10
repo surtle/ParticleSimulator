@@ -1,5 +1,5 @@
 #pragma once
-#include "Model.h"
+#include "FloorModel.h"
 #include "Core.h"
 
 class Floor
@@ -9,12 +9,12 @@ public:
 	void draw(glm::mat4 viewMatr, uint shader);
 
 private:
-	Model* floor;
+	FloorModel* floor;
 
-	glm::vec3 p1 = glm::vec3(-10, -2, -10);
-	glm::vec3 p2 = glm::vec3(10, -2, -10);
-	glm::vec3 p3 = glm::vec3(-10, -2, 10);
-	glm::vec3 p4 = glm::vec3(10, -2, 10);
+	glm::vec3 p1 = glm::vec3(-10, -1, -10);
+	glm::vec3 p2 = glm::vec3(10, -1, -10);
+	glm::vec3 p3 = glm::vec3(-10, -1, 10);
+	glm::vec3 p4 = glm::vec3(10, -1, 10);
 
 	glm::vec3 n = glm::vec3(0, 1, 0);
 

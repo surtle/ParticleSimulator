@@ -19,6 +19,23 @@ Cloth::Cloth()
 	clothModel = new Model();
 }
 
+Cloth::~Cloth()
+{
+	for (Particle* p : particles) {
+		delete p;
+	}
+
+	for (SpringDamper* s : springDampers) {
+		delete s;
+	}
+
+	for (Triangle* t : triangles) {
+		delete t;
+	}
+
+	delete clothModel;
+}
+
 void Cloth::init()
 {
 	// p0   p1   p2   p3  ...  p19
@@ -30,7 +47,7 @@ void Cloth::init()
 	// initialize array of particles to be 20x20 particles 
 	for (float r = 2; r > -2; r -= STEP) { 
 		for (float c = -2; c < 2; c += STEP) { 
-			Particle* p = new Particle(glm::vec3(c, r, 0), 0.1);
+			Particle* p = new Particle(glm::vec3(c, r, 0), 0.1, 5);
 			particles.push_back(p);
 		}
 	}

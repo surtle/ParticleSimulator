@@ -54,7 +54,7 @@ out vec3 finalColor;
 
 void main() {
 
-	gl_FragColor = vec4(0.2);
+	gl_FragColor = vec4(0.47, 0.79, 0.55, 1.0);
 
 	// Gamma correction
 	//gl_FragColor=vec4(sqrt(reflectance),1);

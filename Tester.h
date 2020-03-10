@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "Cloth.h"
 #include "Floor.h"
+#include "ParticleSystem.h"
+#include "GUI.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -51,11 +53,13 @@ private:
 	ShaderProgram* FloorProgram;
 	SpinningCube *Cube;
 	Camera *Cam;
+	GUI* gui;
 	Skeleton* skeleton;
 	Skin* skin;
 	Animation* anim;
 	Player* player;
 	Cloth* cloth;
+	ParticleSystem* system;
 	Floor* floor;
 	Tokenizer* t; 
 };

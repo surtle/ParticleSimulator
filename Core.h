@@ -22,6 +22,9 @@
 // Set up GLUT
 #include "GL/glut.h"
 
+// Add AntTweakBar
+#include <AntTweakBar.h>
+
 // Types
 typedef unsigned int uint;
 
